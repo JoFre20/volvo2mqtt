@@ -12,7 +12,7 @@ from config import settings
 from babel.dates import format_datetime
 from json import JSONDecodeError
 from const import charging_system_states, charging_connection_states, door_states, window_states, \
-    OAUTH_AUTH_URL, OAUTH_TOKEN_URL, VEHICLES_URL, VEHICLE_DETAILS_URL, RECHARGE_STATE_URL, CLIMATE_START_URL, \
+    OAUTH_AUTH_URL, OAUTH_TOKEN_URL, VEHICLES_URL, VEHICLE_DETAILS_URL, RECHARGE_STATE_URL, \
     WINDOWS_STATE_URL, LOCK_STATE_URL, TYRE_STATE_URL, supported_entities, FUEL_BATTERY_STATE_URL, \
     STATISTICS_URL, ENGINE_DIAGNOSTICS_URL, VEHICLE_DIAGNOSTICS_URL, API_BACKEND_STATUS, WARNINGS_URL, engine_states, \
     otp_max_loops
@@ -503,11 +503,7 @@ def api_call(url, method, vin, sensor_id=None, force_update=False, key_change=Fa
         return parse_api_data(data, sensor_id)
     else:
         logging.debug(response.text)
-        if url == CLIMATE_START_URL and response.status_code == 503:
-            logging.warning("Car in use, cannot start pre climatization")
-            mqtt.assumed_climate_state[vin] = "OFF"
-            mqtt.update_car_data()
-        elif "extended-vehicle" in url and response.status_code == 403:
+        if "extended-vehicle" in url and response.status_code == 403:
             # Suppress 403 errors for unsupported extended-vehicle api cars
             logging.debug("Suppressed 403 for extended-vehicle API")
             return None

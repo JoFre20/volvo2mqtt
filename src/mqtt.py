@@ -10,8 +10,7 @@ from threading import Thread, Timer
 from datetime import datetime
 from babel.dates import format_datetime
 from config import settings
-from const import CLIMATE_START_URL, CLIMATE_STOP_URL, CAR_LOCK_URL, \
-    CAR_UNLOCK_URL, availability_topic, icon_states, old_entity_ids, otp_mqtt_topic
+from const import CAR_LOCK_URL, availability_topic, icon_states, old_entity_ids, otp_mqtt_topic
 
 mqtt_client: mqtt.Client
 subscribed_topics = []
@@ -168,38 +167,6 @@ def on_message(client, userdata, msg):
         else:
             logging.warning("Interval " + str(update_interval) + " seconds is to low. Doing nothing!")
         update_car_data()
-    elif "schedule" in msg.topic:
-        try:
-            d = json.loads(payload)
-        except ValueError as e:
-            logging.error("Can't set timer. Error: " + str(e))
-            return None
-
-        if d["mode"] == "timer":
-            start_climate_timer(d, vin)
-        else:
-            logging.warning("No schedule mode found, doing nothing")
-
-
-def start_climate_timer(d, vin):
-    global active_schedules
-    try:
-        minute = int(d["start_time"].split(":")[1])
-        hour = int(d["start_time"].split(":")[0])
-        local_datetime = datetime.now(util.TZ)
-        start_datetime = local_datetime.replace(hour=hour, minute=minute, second=0)
-        timer_seconds = (start_datetime - local_datetime).total_seconds()
-    except Exception as e:
-        logging.error("Error creating climate timer: " + str(e))
-        return None
-
-    if timer_seconds > 0:
-        Timer(timer_seconds, activate_climate_timer, (vin, start_datetime.isoformat(),)).start()
-        active_schedules[vin]["timers"].append(start_datetime.isoformat())
-        logging.debug("Climate timer set to " + str(start_datetime))
-        update_car_data()
-    else:
-        logging.warning("Timer can not be set. Unusable start time entered")
 
 
 def lock_car(vin):
