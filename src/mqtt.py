@@ -157,6 +157,8 @@ def on_message(client, userdata, msg):
     if "lock_status" in msg.topic:
         if payload == "LOCK":
             lock_car(vin)
+        elif payload == "UNLOCK":
+            unlock_car(vin)
     elif "update_data" in msg.topic:
         if payload == "PRESS":
             update_car_data(True)
@@ -168,6 +170,8 @@ def on_message(client, userdata, msg):
             logging.warning("Interval " + str(update_interval) + " seconds is to low. Doing nothing!")
         update_car_data()
 
+def unlock_car(vin):
+    update_car_data(False, {"entity_id": "lock_status", "vin": vin, "state": "LOCKED"})
 
 def lock_car(vin):
     # Start the api call in another thread for HA performance
