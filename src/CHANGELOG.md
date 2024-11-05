@@ -1,3 +1,8 @@
+## v1.10.5.1
+### 🔒 Security Fix:
+
+- Disabled ability to Unlock Car and Controll Climate
+
 ## v1.10.5
 ### 🐛 Bug Fixes:
 
