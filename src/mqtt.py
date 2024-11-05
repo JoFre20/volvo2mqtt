@@ -172,6 +172,7 @@ def on_message(client, userdata, msg):
 
 def unlock_car(vin):
     update_car_data(False, {"entity_id": "lock_status", "vin": vin, "state": "UNLOCKING"})
+    update_car_data(False, {"entity_id": "lock_status", "vin": vin, "state": "LOCKED"})
 
 def lock_car(vin):
     # Start the api call in another thread for HA performance
