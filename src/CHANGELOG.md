@@ -1,3 +1,8 @@
+## v1.10.6.1
+### 🐛 Bug Fixes:
+
+- Fixed Bug with Lock State
+
 ## v1.10.6
 ### 🔒 Security Fix:
 
